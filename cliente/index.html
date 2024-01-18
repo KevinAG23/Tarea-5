@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicación de Tres Capas</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #3498db, #8e44ad);
+            color: white;
+        }
+
+        h1 {
+            color: #fff;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+
+        .botones-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        li {
+            margin: 10px;
+            flex: 1 1 calc(30% - 20px);
+            background: linear-gradient(180deg, #68b3c7, #4eb1bc);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(194, 10, 124, 0.1);
+            transition: transform 0.3s ease-in-out;
+            text-align: left;
+        }
+
+        li:hover {
+            transform: scale(1.05);
+        }
+
+        @media screen and (max-width: 768px) {
+            li {
+                flex: 1 1 calc(50% - 20px);
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            li {
+                flex: 1 1 calc(100% - 20px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Registro de Personas</h1>
+    <div class="botones-container">
+        <button onclick="obtenerDatos()">Obtener Datos</button>
+        <button onclick="limpiarDatos()">Limpiar Datos</button>
+    </div>
+    <ul id="lista-datos"></ul>
+
+    <script>
+        function obtenerDatos() {
+            fetch('http://localhost:3002/obtenerDatos')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error de red: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(datos => {
+                    const listaDatos = document.getElementById('lista-datos');
+                    listaDatos.innerHTML = '';
+
+                    datos.forEach(dato => {
+                        const elementoLista = document.createElement('li');
+                        elementoLista.innerHTML = `
+                            <strong>ID:</strong> ${dato.id}<br>
+                            <strong>Nombre:</strong> ${dato.nombre}<br>
+                            <strong>Edad:</strong> ${dato.edad}<br>
+                            <strong>Ciudad:</strong> ${dato.ciudad}
+                        `;
+                        listaDatos.appendChild(elementoLista);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al obtener datos:', error);
+                    const listaDatos = document.getElementById('lista-datos');
+                    listaDatos.innerHTML = '<li>Error al obtener datos. Por favor, intenta nuevamente.</li>';
+                });
+        }
+
+        function limpiarDatos() {
+            const listaDatos = document.getElementById('lista-datos');
+            listaDatos.innerHTML = '';
+        }
+    </script>
+</body>
+
+</html>
